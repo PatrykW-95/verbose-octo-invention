@@ -103,18 +103,22 @@ namespace LicenseManager.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            public string Role { get; set; } = "User";
         }
 
 
-        public async Task OnGetAsync(string returnUrl = null)
+        public async Task OnGetAsync(string role = "User", string returnUrl = null)
         {
             ReturnUrl = returnUrl;
+            Input = new InputModel { Role = role == "Admin" ? "Admin" : "User" };
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
         }
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
-            returnUrl ??= Url.Content("~/");
+            var role = (Input?.Role == "Admin") ? "Admin" : "User";
+            returnUrl ??= (role == "Admin" ? "/Admin/Licenses" : "/MyLicenses");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
             if (ModelState.IsValid)
             {
@@ -128,6 +132,9 @@ namespace LicenseManager.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
+
+                    // Ensure role exists and assign it
+                    await _userManager.AddToRoleAsync(user, role);
 
                     var userId = await _userManager.GetUserIdAsync(user);
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

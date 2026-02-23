@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace LicenseManager.Areas.Admin.Controllers;
 
 [Area("Admin")]
-[Authorize]
+[Authorize(Roles = "Admin")]
 public class LicensesController : Controller
 {
     private readonly ApplicationDbContext _context;

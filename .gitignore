@@ -1,0 +1,23 @@
+## .NET Build artifacts
+bin/
+obj/
+*.user
+
+## NuGet packages
+*.nupkg
+packages/
+
+## Visual Studio
+.vs/
+*.suo
+
+## Rider
+.idea/
+
+## Published output
+publish/
+
+## SQLite dev databases
+*.db
+*.db-shm
+*.db-wal

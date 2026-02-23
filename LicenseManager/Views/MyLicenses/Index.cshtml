@@ -1,0 +1,67 @@
+@model IEnumerable<LicenseManager.Models.License>
+
+@{
+    ViewData["Title"] = "My Licenses";
+}
+
+<h1>My Licenses</h1>
+<p>Below are all licenses linked to your account.</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        You do not have any licenses yet. Contact an administrator to get a license assigned to your email.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>License Key</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Expires</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><code>@item.Key.Substring(0, 8)…</code></td>
+                    <td>
+                        @if (item.Type == LicenseManager.Models.LicenseType.Paid)
+                        {
+                            <span class="badge bg-success">Paid</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-secondary">Free</span>
+                        }
+                    </td>
+                    <td>
+                        @switch (item.Status)
+                        {
+                            case LicenseManager.Models.LicenseStatus.Active:
+                                <span class="badge bg-primary">Active</span>
+                                break;
+                            case LicenseManager.Models.LicenseStatus.Expired:
+                                <span class="badge bg-warning text-dark">Expired</span>
+                                break;
+                            case LicenseManager.Models.LicenseStatus.Revoked:
+                                <span class="badge bg-danger">Revoked</span>
+                                break;
+                        }
+                    </td>
+                    <td>@item.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    <td>@(item.ExpiresAt.HasValue ? item.ExpiresAt.Value.ToString("yyyy-MM-dd") : "Never")</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

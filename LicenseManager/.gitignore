@@ -1,0 +1,27 @@
+## .NET Build artifacts
+bin/
+obj/
+*.user
+
+## NuGet packages
+*.nupkg
+packages/
+
+## Visual Studio
+.vs/
+*.suo
+*.user
+
+## Rider
+.idea/
+
+## Published output
+publish/
+
+## Entity Framework database files (SQLite dev artifact; we use SQL Server)
+*.db
+*.db-shm
+*.db-wal
+
+## User secrets
+secrets.json

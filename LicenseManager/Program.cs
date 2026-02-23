@@ -6,9 +6,22 @@ using LicenseManager.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var databaseProvider = builder.Configuration["DatabaseProvider"] ?? "SqlServer";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
+{
+    if (databaseProvider.Equals("Sqlite", StringComparison.OrdinalIgnoreCase))
+    {
+        var sqliteConnection = builder.Configuration.GetConnectionString("SqliteConnection")
+            ?? throw new InvalidOperationException("Connection string 'SqliteConnection' not found.");
+        options.UseSqlite(sqliteConnection);
+    }
+    else
+    {
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        options.UseSqlServer(connectionString);
+    }
+});
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
